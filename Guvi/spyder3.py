@@ -1,6 +1,5 @@
-import pandas
 import scrapy
-import scrapy_playwright
+#import scrapy_playwright
 
 class Spyder3Spider(scrapy.Spider):
     name = "spyd3"
@@ -8,14 +7,17 @@ class Spyder3Spider(scrapy.Spider):
             url = "https://www.guvi.in/courses"    
             yield scrapy.Request(url, meta={'playwright': True})
     def parse(self, response):
-        for link in response.css("div#data-science-micro-degree").css("a::attr(href)"):
-            yield response.follow(link.get(), callback=self.parser_contents1)
         for link in response.xpath("//*[@id='premiumLib']//div//a/@href"):
             yield scrapy.Request(response.urljoin(link.get()), meta={'playwright':True}, callback=self.parser_contents1)
     def parser_contents1(self, response):
         link = response.request.url
         name = response.xpath("//*[@id='courses-watch']/section[1]/div[1]/div[2]/h1//text()").get()
         desc = response.xpath("//*[@id='about_description']/text()").get()
+        s_desc = ''
+        for i in str(desc):
+            while(i!='.'):
+                s_desc = s_desc+i
+        s_desc = "<p>" +s_desc+ "</p>"
         desc = "<p>" + str(desc) + "</p>"
         #course_vid = response.xpath("//*[@id='course-video']//@src").get()
         author = response.xpath("//*[@id='author']/div[1]/div/div[1]/h4/text()").get()
@@ -69,6 +71,7 @@ class Spyder3Spider(scrapy.Spider):
             'Course Name': name,
             'Course Link': link,
             'Description': desc,
+            'Short Description': s_desc,
             'Author': author,
             #'vid_link': course_vid,
             'Author description': ab_auth,
