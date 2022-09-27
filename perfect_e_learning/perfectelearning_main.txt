@@ -132,7 +132,7 @@ class qspider(scrapy.Spider):
 
 
         #price
-        price = response.xpath('//span[@class="price"]/text() | //div[@class="course-price mt-2 mb-4"]//span/text()').extract()
+        price = response.xpath('//span[@class="price"]/text() | //div[@class="course-price mt-2 mb-4"]//span/text() | //div[@class="course-price mt-2 mb-4"]//ins//span/text()').extract()
         price = [pri.strip() for pri in price]
         price = "".join(price)
         price = re.sub('\(.*?\)', '', price)
